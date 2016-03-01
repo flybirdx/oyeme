@@ -5,15 +5,15 @@ import datetime # simple time cost calculating tool
 # get randomized generator
 class TestGen(object):
     """ test case generator """
-    def __init__(self, N, itemNum, inversedPercent=2, chrRange=256):
-        self.N = N
+    def __init__(self, count, itemNum, inversedPercent=2, chrRange=256):
+        self.count = count
         self.itemNum = itemNum
         self.inversedPercent = inversedPercent
         self.chrRange = chrRange
 
     def generate(self):
         lst = []
-        for i in range(self.N):
+        for _ in range(self.count):
             r = random.randrange(self.itemNum)
             items = [i for i in range(r)]
             random.shuffle(items)
@@ -22,19 +22,24 @@ class TestGen(object):
                 if item % self.inversedPercent == 0:
                     subDict['_id'] = item
                 else:
-                    subDict[ chr(item % self.chrRange) ] = item
+                    subDict[chr(item % self.chrRange)] = item
             lst.append(subDict)
         return lst
 
 
 # test
-tg = TestGen(100,90)
-lst = tg.generate()
-d0 = datetime.datetime.now()
+def test():
+    t0 = datetime.datetime.now()
+    tg = TestGen(100, 90)
+    lst = tg.generate()
+    t1 = datetime.datetime.now()
 
-# a matter of algorithm
-lst = [ {k: v for k, v in dct.items() if k != '_id' } for dct in lst]
+    # a matter of algorithm
+    lst = [{k: v for k, v in dct.items() if k != '_id'} for dct in lst]
 
-d1 = datetime.datetime.now()
-delta = d1 - d0
-print('lst(%d*%d) time cost = %s' % (tg.N, tg.itemNum , str(delta))) # in numpy we use npArray.size() to get (x,y,z,... ,n) axis
+    t2 = datetime.datetime.now()
+    # in numpy we use npArray.size() to get (x,y,z,... ,n) axis
+    print('lst(%d*%d) time cost = %s, %s' % (tg.count, tg.itemNum, str(t1 - t0), str(t2 - t1)))
+
+if __name__ == '__main__':
+    test()
